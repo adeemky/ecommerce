@@ -24,8 +24,13 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # Internal Apps
+    "user",
+    "product",
     # External Apps
     "rest_framework",
+    "rest_framework.authtoken",
+    "mptt",
+    "drf_spectacular",
 ]
 
 MIDDLEWARE = [
@@ -89,4 +94,15 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-REST_FRAMEWORK = {}
+AUTH_USER_MODEL = "user.User"
+
+REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",  # ./manage.py spectacular --file schema.yml
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework.authentication.TokenAuthentication",
+    ),
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "DRF Ecommerce",
+}
