@@ -16,10 +16,7 @@ class BrandSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    # brand = serializers.CharField(source="brand.name")
-    # category = CategorySerializer()
-
     class Meta:
         model = Product
-        fields = ["id", "name", "description", "is_digital", "brand", "category"]
+        fields = ["id", "name", "description", "is_digital", "price", "brand", "category"]
         read_only_fields = ["id"]
