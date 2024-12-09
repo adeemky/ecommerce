@@ -1,5 +1,6 @@
 from pathlib import Path
 import environ
+import os
 
 
 env = environ.Env()
@@ -32,6 +33,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "mptt",
     "drf_spectacular",
+    "django_filters",
 ]
 
 MIDDLEWARE = [
@@ -92,17 +94,21 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
-
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "user.User"
 
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",  # ./manage.py spectacular --file schema.yml
-    "DEFAULT_AUTHENTICATION_CLASSES": (
+    "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.SessionAuthentication",
         "rest_framework.authentication.TokenAuthentication",
-    ),
+    ],
 }
 
 SPECTACULAR_SETTINGS = {
