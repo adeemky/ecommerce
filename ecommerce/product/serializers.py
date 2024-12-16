@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Category, Brand, Product, Comment
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError, PermissionDenied
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -16,11 +16,16 @@ class CommentSerializer(serializers.ModelSerializer):
         user = request.user
         product = data.get("product")
 
-        if self.instance:
-            return data
+        if not user.is_staff:
+            if "user" in self.initial_data:
+                raise PermissionDenied(
+                    "You are not allowed to modify the 'user' field."
+                )
 
-        if Comment.objects.filter(product=product, user=user).exists():
-            raise ValidationError("You have already reviewed this product.")
+        if not self.instance:
+            if Comment.objects.filter(product=product, user=user).exists():
+                raise ValidationError("You have already reviewed this product.")
+
         return data
 
     def create(self, validated_data):
@@ -39,17 +44,27 @@ class BrandSerializer(serializers.ModelSerializer):
     class Meta:
         model = Brand
         fields = "__all__"
+        read_only_fields = ["id"]
 
 
 class ProductSerializer(serializers.ModelSerializer):
     average_rating = serializers.FloatField(read_only=True)
     number_of_ratings = serializers.IntegerField(read_only=True)
-    category = serializers.SlugRelatedField(queryset=Category.objects.all(), slug_field="name")
-    brand = serializers.SlugRelatedField(queryset=Brand.objects.all(), slug_field="name")
 
     class Meta:
         model = Product
-        fields = ["id", "name", "description", "image", "in_stock", "category", "brand", "price", "average_rating", "number_of_ratings"]
+        fields = [
+            "id",
+            "name",
+            "description",
+            "image",
+            "in_stock",
+            "category",
+            "brand",
+            "price",
+            "average_rating",
+            "number_of_ratings",
+        ]
 
 
 class ProductDetailSerializer(ProductSerializer):

@@ -1,7 +1,13 @@
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets
 from .models import Category, Brand, Product, Comment
-from .serializers import CategorySerializer, BrandSerializer, ProductSerializer, ProductDetailSerializer, CommentSerializer
-from .permissions import ProductPermission, IsCommentUserOrReadOnly
+from .serializers import (
+    CategorySerializer,
+    BrandSerializer,
+    ProductSerializer,
+    ProductDetailSerializer,
+    CommentSerializer,
+)
+from .permissions import IsAdminOrReadOnly, IsCommentUserOrReadOnly
 from .filters import ProductFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
@@ -10,18 +16,18 @@ from rest_framework.filters import OrderingFilter
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [IsAdminOrReadOnly]
 
 
 class BrandViewSet(viewsets.ModelViewSet):
     queryset = Brand.objects.all()
     serializer_class = BrandSerializer
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [IsAdminOrReadOnly]
 
 
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
-    permission_classes = [ProductPermission]
+    permission_classes = [IsAdminOrReadOnly]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_class = ProductFilter
     ordering_fields = ["name", "price"]
