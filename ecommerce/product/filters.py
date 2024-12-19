@@ -1,8 +1,9 @@
 from django_filters import rest_framework as filters
 from django.db.models import Avg
-from .models import Product, Category
+from .models import Product, Category, Comment
 
 """ /api/products/?id=&name=&brand=&category=&price=&in_stock=&price_min=&price_max=&average_rating_min= """
+
 
 class ProductFilter(filters.FilterSet):
     id = filters.NumberFilter()
@@ -27,5 +28,15 @@ class ProductFilter(filters.FilterSet):
             return queryset.none()
 
     def filter_average_rating(self, queryset, name, value):
-        return queryset.annotate(avg_rating=Avg("comments__rating")).filter(avg_rating__gte=value)
+        return queryset.annotate(avg_rating=Avg("comments__rating")).filter(
+            avg_rating__gte=value
+        )
 
+
+class CommentFilter(filters.FilterSet):
+    product = filters.NumberFilter(field_name="product_id")
+    user = filters.NumberFilter(field_name="user_id")
+
+    class Meta:
+        model = Comment
+        fields = ["product", "user"]

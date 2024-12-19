@@ -15,7 +15,10 @@ SECRET_KEY = env(
     "SECRET_KEY"
 )  # from django.core.management.utils import get_random_secret_key > print(get_randeomkey())
 
-DEBUG = True
+DEBUG = env.bool("DEBUG", default=False)
+
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
+
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -92,7 +95,8 @@ USE_I18N = True
 USE_TZ = True
 
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

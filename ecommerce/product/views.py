@@ -8,7 +8,7 @@ from .serializers import (
     CommentSerializer,
 )
 from .permissions import IsAdminOrReadOnly, IsCommentUserOrReadOnly
-from .filters import ProductFilter
+from .filters import ProductFilter, CommentFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
 
@@ -43,14 +43,5 @@ class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = [IsCommentUserOrReadOnly]
 
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        product_id = self.request.query_params.get("product")
-        user_id = self.request.query_params.get("user")
-
-        if product_id:
-            queryset = queryset.filter(product_id=product_id)
-        if user_id:
-            queryset = queryset.filter(user_id=user_id)
-
-        return queryset
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = CommentFilter
